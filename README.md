@@ -6,9 +6,13 @@ StackIt is a streamlined, community-driven question-and-answer web platform buil
 
 ## 👥 Collaborators
 
+
 - Chirag Singh
 - Sneha Singh
 - Harsh Pandey
+
+## Video Link  
+https://drive.google.com/file/d/1cfJAZMjEsWWF0Yq0HJoGHWniDwHmNdza/view?usp=sharing
 
 ## 🚀 Features
 
