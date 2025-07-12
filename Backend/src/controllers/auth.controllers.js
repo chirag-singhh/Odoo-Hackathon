@@ -48,7 +48,7 @@ export const signupUser = async (req,res)=>{
      }
 
     } catch (error) {
-        console.log("Error")
+        console.log("Error hogaya")
         res.status(400).json({message:"error"})
     }
 }
