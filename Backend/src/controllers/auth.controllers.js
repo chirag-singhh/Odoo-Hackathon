@@ -1,7 +1,7 @@
 import {User} from "../models/users.models.js"
 import bycrypt from 'bcryptjs'
 import { generateToken } from "../utils.js"
-// import cloudinary from "../lib/cloudinary.js"
+
 export const signupUser = async (req,res)=>{
     // res.send("signup route")
     // console.log("Request Body:", req.body);
@@ -87,23 +87,6 @@ export const logoutUser = (req,res)=>{
     
 }
 
-// export const updateprofileUser = async (req,res)=> {
-   
-//     try {
-//         const {profilePic} = req.body
-//         const userId = req.user._id;
-//         if(!profilePic){
-//             res.status(400).json({message:"No profile pic"})
-//         }
-//        const uploadResponse = await cloudinary.uploader.upload(profilePic)
-//        const updatedUser = await User.findByIdAndUpdate(userId,{profilePic:uploadResponse.secure_url},{new:true})
-//        res.status(200).json(updatedUser)
-//     } catch (error) {
-//         res.status(400).json({message:"error"})
-//         console.log(error)
-//     }
-
-// }
 
 export const checkAuth = (req,res)=>{
     try {

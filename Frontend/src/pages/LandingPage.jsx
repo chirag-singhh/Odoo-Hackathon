@@ -10,6 +10,7 @@ const LandingPage = ({ isLoggedIn, setIsLoggedIn }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -27,26 +28,36 @@ const LandingPage = ({ isLoggedIn, setIsLoggedIn }) => {
     fetchQuestions();
   }, []);
 
-  // Filtering and Sorting
-  const filteredQuestions = questions.filter((q) => {
-    switch (activeFilter) {
-      case "Unanswered":
-        return q.answers?.length === 0;
-      default:
-        return true;
-    }
-  }).sort((a, b) => {
-    switch (activeFilter) {
-      case "Most Voted":
-        return (b.upvotes || 0) - (a.upvotes || 0);
-      case "Newest":
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      case "Oldest":
-        return new Date(a.createdAt) - new Date(b.createdAt);
-      default:
-        return 0;
-    }
-  });
+  // Filtering + Searching + Sorting
+  const filteredQuestions = questions
+    .filter((q) => {
+      const matchesSearch =
+        q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        q.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesFilter = (() => {
+        switch (activeFilter) {
+          case "Unanswered":
+            return q.answers?.length === 0;
+          default:
+            return true;
+        }
+      })();
+
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => {
+      switch (activeFilter) {
+        case "Most Voted":
+          return (b.upvotes || 0) - (a.upvotes || 0);
+        case "Newest":
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        case "Oldest":
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        default:
+          return 0;
+      }
+    });
 
   // Pagination
   const totalPages = Math.ceil(filteredQuestions.length / QUESTIONS_PER_PAGE);
@@ -65,24 +76,19 @@ const LandingPage = ({ isLoggedIn, setIsLoggedIn }) => {
       <main className="max-w-5xl mx-auto px-6 py-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-white">Questions</h2>
-          {/* <Link to={'/postquestion'}>
-            <button className="bg-purple-800 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
-              Ask New Question
-            </button>
-          </Link> */}
           {isLoggedIn ? (
-  <Link to="/postquestion">
-    <button className="bg-purple-800 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
-      Ask New Question
-    </button>
-  </Link>
-) : (
-  <Link to="/login">
-    <button className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm">
-      Login to Ask
-    </button>
-  </Link>
-)}
+            <Link to="/postquestion">
+              <button className="bg-purple-800 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
+                Ask New Question
+              </button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <button className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm">
+                Login to Ask
+              </button>
+            </Link>
+          )}
         </div>
 
         {/* Search Bar */}
@@ -90,20 +96,20 @@ const LandingPage = ({ isLoggedIn, setIsLoggedIn }) => {
           <input
             type="text"
             placeholder="Search questions"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-[#2a1f4d] text-white placeholder-purple-300 px-4 py-2 rounded-lg focus:outline-none"
           />
         </div>
 
         {/* Filters */}
         <div className="flex gap-3 flex-wrap mb-6">
-          {["All", "Most Voted", "Newest", "Oldest"].map((filter) => (
+          {["All", "Most Voted", "Newest", "Oldest", "Unanswered"].map((filter) => (
             <button
               key={filter}
               onClick={() => handleFilterChange(filter)}
               className={`text-sm px-4 py-1.5 rounded-lg ${
-                activeFilter === filter
-                  ? "bg-purple-800"
-                  : "bg-[#2a1f4d] hover:bg-purple-800"
+                activeFilter === filter ? "bg-purple-800" : "bg-[#2a1f4d] hover:bg-purple-800"
               }`}
             >
               {filter}
@@ -115,7 +121,7 @@ const LandingPage = ({ isLoggedIn, setIsLoggedIn }) => {
         {loading ? (
           <p className="text-center text-purple-200">Loading questions...</p>
         ) : currentQuestions.length === 0 ? (
-          <p className="text-center text-purple-200">No questions available.</p>
+          <p className="text-center text-purple-200">No questions found.</p>
         ) : (
           <div className="space-y-6">
             {currentQuestions.map((q, index) => (
@@ -129,21 +135,8 @@ const LandingPage = ({ isLoggedIn, setIsLoggedIn }) => {
                     <Link to={`/questions/${q._id}`}>
                       <h3 className="text-lg font-bold hover:underline">{q.title}</h3>
                     </Link>
-                    {/* {isLoggedIn ? (
-  <Link to={`/questions/${q._id}`}>
-    <h3 className="text-lg font-bold hover:underline">{q.title}</h3>
-  </Link>
-) : (
-  <h3 className="text-lg font-bold text-gray-400 cursor-not-allowed" title="Login to view details">
-    {q.title}
-  </h3>
-)} */}
-
                     <p className="text-purple-100 text-sm">{q.description}</p>
                   </div>
-                  {/* <button className="bg-purple-700 w-fit px-4 py-1.5 rounded-lg text-sm hover:bg-purple-600">
-                    Upvote ({q.upvotes || 0})
-                  </button> */}
                 </div>
                 {q.image && (
                   <div
@@ -184,4 +177,3 @@ const LandingPage = ({ isLoggedIn, setIsLoggedIn }) => {
 };
 
 export default LandingPage;
-

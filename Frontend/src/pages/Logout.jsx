@@ -1,31 +1,4 @@
-// // src/pages/Logout.jsx
-// import { useEffect } from 'react'
-// import { useNavigate } from 'react-router-dom'
 
-// function Logout() {
-//   const navigate = useNavigate()
-
-//   useEffect(() => {
-//     // Clear auth token
-//     localStorage.removeItem('token')
-
-//     // Redirect to login after 2 seconds
-//     const timeout = setTimeout(() => {
-//       navigate('/')
-//     }, 2000)
-
-//     return () => clearTimeout(timeout)
-//   }, [navigate])
-
-//   return (
-//     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-//       <h2>You have been logged out.</h2>
-//       <p>Redirecting to login...</p>
-//     </div>
-//   )
-// }
-
-// export default Logout
 
 
 // src/pages/Logout.jsx
